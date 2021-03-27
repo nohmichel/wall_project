@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>Coding Dojo Wall</title>
+	{% load static %}
+	<link rel="stylesheet" href="{% static 'css/style.css' %}"> 
+</head>
+<body>
+	<div id="header">
+		<div id="DojoWall" class="header"><h1> CodingDojo Wall</h1></div>	
+		<div id="name" class="header"><h4> Welcome {{logged_User.first_name}} {{logged_User.last_name}}<h4></div>
+		<div id="logout" class="header"><a href="/logout">Log Out</a></div>
+	</div>		
+	<div id="container">
+		<div id="post_message">
+		<form action='messages/create' method="POST">
+			{% csrf_token %}
+			<label for="messages" class="post">Post a Message:</label><br>
+			<textarea name="message" cols="100" rows="5"></textarea><br>
+			<input type="submit" id="mess_button" value="Post a Message">
+		</form>
+		</div>
+		<div id="messages">
+			{% for one_message in all_messages %}
+				<p><h4>{{logged_User.first_name}} {{logged_User.last_name}} {{one_message.created_at}}</h4>
+				</p>{{one_message.message}}<br>
+			<a href="{% url 'delete_message' message_id=one_message.id %}">
+			<input type="submit" id="delete_button" name="delete" value="Delete Message"><br></a>
+		</form>		
+		<div id="comments">
+			{% for one_comment in one_message.message_comment.all %}
+				<p>{{one_comment.created_at}}</p>
+				<p>{{one_comment.comment}}</p>
+				
+			{% endfor %}
+		</div>
+		<div id="post_comment">
+		<form action="messages/comment"	method="POST">
+				{% csrf_token %}
+			<label for="comment"class="post">Post a Comment:</label><br>
+			<textarea name="comment" cols="80" rows="3"></textarea><br>
+			<input type="hidden" value="{{one_message.id}}" name="message">
+			<input type="submit" id='comment_button' name="input_comment" value="Post a Comment">
+		</form>
+		</div>
+			{% endfor %}		
+		</div>
+	</div>	
+</body>
+</html>
